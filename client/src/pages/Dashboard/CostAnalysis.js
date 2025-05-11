@@ -23,7 +23,8 @@ const CostAnalysis = () => {
 
   useEffect(() => {
     setLoading(true);
-    axios.get(`http://localhost:5000/api/houses/${id}/costs?period=${view}`)
+    axios
+      .get(`http://localhost:5000/api/houses/${id}/costs?period=${view}`)
       .then((res) => {
         setCostDetails(res.data);
         setLoading(false);
@@ -36,7 +37,6 @@ const CostAnalysis = () => {
 
   if (loading) return <div>Loading...</div>;
 
-  // Separate time-series and appliance costs
   const timeBasedCosts = [];
   const applianceCosts = [];
 
@@ -45,7 +45,6 @@ const CostAnalysis = () => {
     const consumptionCost = item["Consumption Cost / Contribution (%)"] ?? 0;
     const productionCost = item["Production Cost ($)"] ?? 0;
 
-    // Identify whether it is time-based or appliance-based
     if (isTimeLabel(label, view)) {
       timeBasedCosts.push({
         label,
@@ -60,7 +59,6 @@ const CostAnalysis = () => {
     }
   });
 
-  // Build X-Axis labels
   const xLabels = getXAxisLabels(view);
   const consumptionData = xLabels.map((label) => {
     const found = timeBasedCosts.find((item) => item.label === label);
@@ -88,18 +86,18 @@ const CostAnalysis = () => {
   };
 
   const totalConsumption = consumptionData.reduce((sum, val) => sum + val, 0);
-  const energyCostPerKWh = 0.2; // hardcoded dummy
+  const energyCostPerKWh = 0.2;
+
+  const sortedAppliances = [...applianceCosts].sort((a, b) => a.consumptionCost - b.consumptionCost);
 
   return (
     <div className="space-y-10">
-      {/* Page Title */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-800">
           Energy Cost Analysis - {view.charAt(0).toUpperCase() + view.slice(1)}
         </h1>
       </div>
 
-      {/* Top Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-lg shadow p-5">
           <p className="text-sm text-gray-500 mb-1">Current {view} Cost</p>
@@ -113,24 +111,32 @@ const CostAnalysis = () => {
         </div>
       </div>
 
-      {/* Chart & Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Appliance Breakdown */}
         <div className="bg-white rounded-lg shadow p-5">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">{view} Appliance Cost Breakdown</h3>
           <ul className="space-y-3 text-sm">
-            {applianceCosts.map((item, index) => (
-              <li key={index} className="flex justify-between items-center">
-                <div className="text-gray-700">{item.label}</div>
-                <div className="text-right font-medium text-gray-800">
-                  ${item.consumptionCost.toFixed(2)}
-                </div>
-              </li>
-            ))}
+            {sortedAppliances.map((item, index) => {
+              const percentage = (item.consumptionCost / totalConsumption) * 100;
+              const gradientStrength = Math.min(100, Math.floor((index / sortedAppliances.length) * 100));
+              return (
+                <li key={index} className="space-y-1">
+                  <div className="flex justify-between text-sm text-gray-700 font-medium">
+                    <span>{item.label}</span>
+                    <span>${item.consumptionCost.toFixed(2)}</span>
+                  </div>
+                  <div
+                    className="h-2 rounded"
+                    style={{
+                      width: `${percentage}%`,
+                      background: `linear-gradient(to right, #fde68a, #f97316 ${gradientStrength}%)`,
+                    }}
+                  />
+                </li>
+              );
+            })}
           </ul>
         </div>
 
-        {/* Production vs Consumption Graph */}
         <div className="bg-white rounded-lg shadow p-5">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-semibold text-gray-800">
@@ -144,14 +150,9 @@ const CostAnalysis = () => {
   );
 };
 
-// Helper to detect if label is time based
 function isTimeLabel(label, view) {
-  if (view === "day") {
-    return label.includes(":"); // "00:00", "03:00"
-  }
-  if (view === "month") {
-    return /^[0-9]+$/.test(label); // "1", "2", "3"...
-  }
+  if (view === "day") return label.includes(":");
+  if (view === "month") return /^[0-9]+$/.test(label);
   if (view === "year") {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     return months.includes(label);
@@ -159,17 +160,10 @@ function isTimeLabel(label, view) {
   return false;
 }
 
-// Helper to build X axis labels
 function getXAxisLabels(view) {
-  if (view === "day") {
-    return ["00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00"];
-  }
-  if (view === "month") {
-    return Array.from({ length: 30 }, (_, i) => (i + 1).toString());
-  }
-  if (view === "year") {
-    return ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  }
+  if (view === "day") return ["00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00"];
+  if (view === "month") return Array.from({ length: 30 }, (_, i) => (i + 1).toString());
+  if (view === "year") return ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   return [];
 }
 

@@ -65,8 +65,11 @@ const HouseDashboard = () => {
   };
 
   // Production vs Consumption Line Graph
+  // const timeLabels = view === "day"
+  //   ? Array.from({ length: 24 }, (_, i) => `${i}:00`)
   const timeLabels = view === "day"
-    ? Array.from({ length: 24 }, (_, i) => `${i}:00`)
+    ? ["0:00", "3:00", "6:00", "9:00", "12:00", "15:00", "18:00", "21:00"]
+
     : view === "month"
     ? Array.from({ length: 30 }, (_, i) => `Day ${i + 1}`)
     : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];

@@ -50,13 +50,17 @@ const DashboardLayout = () => {
       <main className="flex-1 p-6 overflow-y-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-3">
+          {/* <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold">House #{id}</h1>
             <button className="flex items-center bg-white border border-gray-300 rounded-md px-3 py-1 text-sm shadow-sm hover:shadow">
               House #{id}
               <ChevronDown className="w-4 h-4 ml-2 text-gray-500" />
             </button>
+          </div> */}
+          <div className="flex items-center">
+            <h1 className="text-2xl font-bold">House {id}</h1>
           </div>
+
 
           {/* 🔁 View Toggle now dynamic */}
           <div className="flex gap-2">
