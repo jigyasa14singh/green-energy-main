@@ -33,6 +33,11 @@ const ApplianceAnalysis = () => {
       });
   }, [id, view]);
 
+  const monthOrder = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+
   // Prepare selected data
   let selectedData;
   if (selectedAppliance === "All") {
@@ -47,11 +52,7 @@ const ApplianceAnalysis = () => {
     });
 
     const sortedTimes = Array.from(timeMap.keys()).sort((a, b) => {
-      // Sorting logic: if numeric, sort by number; else string
-      if (!isNaN(a) && !isNaN(b)) {
-        return Number(a) - Number(b);
-      }
-      return a.localeCompare(b);
+      return monthOrder.indexOf(a) - monthOrder.indexOf(b);
     });
 
     selectedData = {

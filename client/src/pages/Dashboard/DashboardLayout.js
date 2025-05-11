@@ -1,12 +1,12 @@
 import React from "react";
 import { Outlet, useParams, Link, useLocation } from "react-router-dom";
-import { ChevronDown, LayoutDashboard, DollarSign, Plug, Activity, Sun, Settings } from "lucide-react";
-import { useDashboardView } from "../../context/DashboardContext"; // 👈 import context
+import { ChevronDown, LayoutDashboard, DollarSign, Plug } from "lucide-react";
+import { useDashboardView } from "../../context/DashboardContext";
 
 const DashboardLayout = () => {
   const { id } = useParams();
   const location = useLocation();
-  const { view, setView } = useDashboardView(); // 👈 use view context
+  const { view, setView } = useDashboardView();
 
   const isActive = (path) => location.pathname.includes(path);
 
@@ -21,7 +21,7 @@ const DashboardLayout = () => {
           <Link
             to={`/dashboard/${id}`}
             className={`flex items-center gap-3 px-4 py-2 rounded-md hover:bg-slate-700 ${
-              location.pathname ===` /dashboard/${id}` ? "bg-slate-700" : ""
+              location.pathname === `/dashboard/${id}` ? "bg-slate-700" : ""
             }`}
           >
             <LayoutDashboard size={18} /> <span>Dashboard</span>
@@ -42,42 +42,34 @@ const DashboardLayout = () => {
           >
             <Plug size={18} /> <span>Appliances</span>
           </Link>
-          {/* More links... */}
         </nav>
       </aside>
 
       {/* Main content */}
       <main className="flex-1 p-6 overflow-y-auto">
-        {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          {/* <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold">House #{id}</h1>
-            <button className="flex items-center bg-white border border-gray-300 rounded-md px-3 py-1 text-sm shadow-sm hover:shadow">
-              House #{id}
-              <ChevronDown className="w-4 h-4 ml-2 text-gray-500" />
-            </button>
-          </div> */}
           <div className="flex items-center">
             <h1 className="text-2xl font-bold">House {id}</h1>
           </div>
 
-
-          {/* 🔁 View Toggle now dynamic */}
-          <div className="flex gap-2">
-            {["day", "month", "year"].map((opt) => (
-              <button
-                key={opt}
-                onClick={() => setView(opt)}
-                className={`px-4 py-2 text-sm rounded border ${
-                  view === opt
-                    ? "bg-blue-600 text-white border-blue-600"
-                    : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100"
-                }`}
-              >
-                {opt.charAt(0).toUpperCase() + opt.slice(1)}
-              </button>
-            ))}
-          </div>
+          {/* 🔁 Only show layout toggle on subroutes, not main dashboard */}
+          {!location.pathname.endsWith(`/dashboard/${id}`) && (
+            <div className="flex gap-2">
+              {["day", "month", "year"].map((opt) => (
+                <button
+                  key={opt}
+                  onClick={() => setView(opt)}
+                  className={`px-4 py-2 text-sm rounded border ${
+                    view === opt
+                      ? "bg-blue-600 text-white border-blue-600"
+                      : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100"
+                  }`}
+                >
+                  {opt.charAt(0).toUpperCase() + opt.slice(1)}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <Outlet />
