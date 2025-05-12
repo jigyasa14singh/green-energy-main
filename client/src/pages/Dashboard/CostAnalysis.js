@@ -73,12 +73,12 @@ const CostAnalysis = () => {
     labels: xLabels,
     datasets: [
       {
-        label: "Production Cost ($)",
+        label: "Production Cost (₹)",
         data: productionData,
         backgroundColor: "#22c55e",
       },
       {
-        label: "Consumption Cost ($)",
+        label: "Consumption Cost (₹)",
         data: consumptionData,
         backgroundColor: "#f97316",
       },
@@ -101,12 +101,12 @@ const CostAnalysis = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white rounded-lg shadow p-5">
           <p className="text-sm text-gray-500 mb-1">Current {view} Cost</p>
-          <p className="text-3xl font-bold text-green-600">${totalConsumption.toFixed(2)}</p>
-          <p className="text-sm text-green-500 mt-1">vs previous {view}</p>
+          <p className="text-3xl font-bold text-green-600">₹{totalConsumption.toFixed(2)}</p>
+          {/* <p className="text-sm text-green-500 mt-1">vs previous {view}</p> */}
         </div>
         <div className="bg-white rounded-lg shadow p-5">
           <p className="text-sm text-gray-500 mb-1">Energy Cost per kWh</p>
-          <p className="text-3xl font-bold text-gray-800">${energyCostPerKWh.toFixed(3)}</p>
+          <p className="text-3xl font-bold text-gray-800">₹{energyCostPerKWh.toFixed(3)}</p>
           <p className="text-sm text-gray-400 mt-1">Auto-calculated</p>
         </div>
       </div>
@@ -122,7 +122,7 @@ const CostAnalysis = () => {
                 <li key={index} className="space-y-1">
                   <div className="flex justify-between text-sm text-gray-700 font-medium">
                     <span>{item.label}</span>
-                    <span>${item.consumptionCost.toFixed(2)}</span>
+                    <span>₹{item.consumptionCost.toFixed(2)}</span>
                   </div>
                   <div
                     className="h-2 rounded"
